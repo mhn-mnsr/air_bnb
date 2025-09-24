@@ -12,7 +12,7 @@ Minimal CrewAI workflow to research destinations, plan an itinerary, and check b
 3. Configure env:
    ```bash
    cp .env.example .env
-   # edit .env and set OPENAI_API_KEY
+   # edit .env and set the provider API key and TRIP_LLM_MODEL
    ```
 
 ### Run
@@ -22,6 +22,14 @@ python3 -m trip_planner.main
 ```
 
 Or customize via function params in `trip_planner/main.py`.
+
+### Switch LLM Provider
+
+Set `TRIP_LLM_MODEL` and the matching API key:
+
+- OpenAI: `TRIP_LLM_MODEL=openai/gpt-4o-mini`, set `OPENAI_API_KEY`
+- Groq: `TRIP_LLM_MODEL=groq/llama-3.3-70b-versatile`, set `GROQ_API_KEY`
+- Anthropic: `TRIP_LLM_MODEL=anthropic/claude-3-5-sonnet-latest`, set `ANTHROPIC_API_KEY`
 
 ### Notes
 

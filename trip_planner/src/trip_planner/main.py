@@ -2,10 +2,10 @@ import os
 from typing import Optional
 
 from dotenv import load_dotenv
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 
 
-def create_agents() -> tuple[Agent, Agent, Agent]:
+def create_agents(llm: Optional[LLM] = None) -> tuple[Agent, Agent, Agent]:
     destination_researcher = Agent(
         role="Destination Researcher",
         goal=(
@@ -16,6 +16,7 @@ def create_agents() -> tuple[Agent, Agent, Agent]:
         ),
         allow_delegation=False,
         verbose=True,
+        llm=llm,
     )
 
     itinerary_planner = Agent(
@@ -28,6 +29,7 @@ def create_agents() -> tuple[Agent, Agent, Agent]:
         ),
         allow_delegation=False,
         verbose=True,
+        llm=llm,
     )
 
     budget_manager = Agent(
@@ -40,6 +42,7 @@ def create_agents() -> tuple[Agent, Agent, Agent]:
         ),
         allow_delegation=False,
         verbose=True,
+        llm=llm,
     )
 
     return destination_researcher, itinerary_planner, budget_manager
@@ -129,7 +132,10 @@ def run(
     budget_env = os.getenv("TRIP_BUDGET_USD")
     budget_usd = budget_usd if budget_usd is not None else (int(budget_env) if budget_env else None)
 
-    a_research, a_plan, a_budget = create_agents()
+    model_name = os.getenv("TRIP_LLM_MODEL") or os.getenv("LLM_MODEL") or "openai/gpt-4o-mini"
+    llm = LLM(model=model_name)
+
+    a_research, a_plan, a_budget = create_agents(llm)
     tasks = create_tasks(
         a_research,
         a_plan,
