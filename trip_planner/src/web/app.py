@@ -34,9 +34,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    static_dir = os.path.join(os.path.dirname(__file__), "static")
-    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
-
     @app.post("/api/plan", response_model=PlanResponse)
     def plan(req: PlanRequest):
         if req.model:
@@ -52,6 +49,10 @@ def create_app() -> FastAPI:
             return PlanResponse(output=output)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    # Mount static site at the end so it doesn't shadow API routes
+    static_dir = os.path.join(os.path.dirname(__file__), "static")
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
     return app
 
